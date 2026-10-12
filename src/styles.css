@@ -31,7 +31,8 @@ fieldset:disabled label {
   display: grid;
   width: max-content;
   gap: 0;
-  border: 3px solid #000;
+  border-top: 3px solid #000;
+  border-left: 3px solid #000;
 }
 
 .board--4 {
@@ -48,7 +49,8 @@ fieldset:disabled label {
 
 .box {
   display: grid;
-  border: 3px solid #000;
+  border-right: 3px solid #000;
+  border-bottom: 3px solid #000;
 }
 
 .box--2x2 {

@@ -1,4 +1,4 @@
-import { render, screen, within, fireEvent } from '@testing-library/react';
+import { render, screen, within, fireEvent, act } from '@testing-library/react';
 import SetupScreen from './SetupScreen';
 
 describe('SetupScreen', () => {
@@ -23,14 +23,21 @@ describe('SetupScreen', () => {
   });
 
   it('disables everything and shows status while busy', () => {
-    const onStart = jest.fn();
-    render(<SetupScreen onStart={onStart} busy />);
+    render(<SetupScreen onStart={() => {}} busy />);
     expect(screen.getAllByRole('radio')).toHaveLength(6);
     screen.getAllByRole('radio').forEach((r) => expect(r).toBeDisabled());
     const start = screen.getByRole('button', { name: 'Start game' });
     expect(start).toBeDisabled();
     expect(screen.getByRole('status')).toHaveTextContent('Generating puzzle…');
-    fireEvent.click(start);
+  });
+
+  it('re-entry guard: the click handler ignores calls while busy', () => {
+    const onStart = jest.fn();
+    render(<SetupScreen onStart={onStart} busy />);
+    const button = screen.getByRole('button', { name: 'Start game' });
+    // A disabled button never dispatches click, so call the React handler directly.
+    const propsKey = Object.keys(button).find((k) => k.startsWith('__reactProps'));
+    act(() => button[propsKey].onClick());
     expect(onStart).not.toHaveBeenCalled();
   });
 

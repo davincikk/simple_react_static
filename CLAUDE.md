@@ -3,7 +3,7 @@
 > SDLC agents read this before touching the repo. Keep it short.
 
 ## What this repo is
-A minimal static React 18 single-page app (currently a single `HelloWorld` component), owned by the Payments team. Built with Vite 6, unit-tested with Jest 30 + React Testing Library, and end-to-end tested with Playwright (Chromium). Runtime: Node.js 18.16 (`.nvmrc`; see "Known pitfalls").
+A static React 18 single-page Sudoku game: a setup screen (grid size 4x4/6x6/9x9, difficulty Easy/Medium/Hard) followed by a board of boxes and cells. Owned by the Payments team. Built with Vite 6, unit-tested with Jest 30 + React Testing Library, and end-to-end tested with Playwright (Chromium). Runtime: Node.js 18.16 (`.nvmrc`; see "Known pitfalls").
 
 ## Commands
 | Purpose | Command |
@@ -18,7 +18,7 @@ These must match the `commands` entry in `sdlc.config.yaml`. First-time setup: `
 
 ## Conventions
 - Language/style: JavaScript (ES modules) + JSX, function components only; ESLint (`eslint:recommended`, `react`, `react-hooks`) in `.eslintrc.cjs`. Declare `propTypes` for component props.
-- Layering: `src/main.jsx` (entry, mounts `App`) → `src/App.jsx` (composition) → `src/components/<Name>.jsx` (one component per file, default export).
+- Layering: `src/main.jsx` (entry, mounts `App`) → `src/App.jsx` (screen state, puzzle generation) → `src/components/<Name>.jsx` (`SetupScreen`, `Board`, `Cell`; one component per file, default export). `src/game/` holds pure board logic (no React); `src/sudoku/` is the puzzle engine (do not change it without an approved design). Use default parameters, not `defaultProps`.
 - Error handling: no remote calls yet; when added, keep data fetching out of presentational components and render an explicit error state.
 - Logging: no `console.*` in committed code; never log PII, tokens, or payment data.
 - Tests:
@@ -35,7 +35,9 @@ These must match the `commands` entry in `sdlc.config.yaml`. First-time setup: `
 ## Domain glossary
 | Term | Meaning |
 |---|---|
-| HelloWorld | Placeholder greeting component; `name` prop defaults to `World`. |
+| Given | Pre-filled puzzle cell; fixed, bold, shaded, named "given N". |
+| Box | Sub-grid with a heavier border (2x2, 2x3 or 3x3). |
+| BOX_DIMS | Box rows x columns per grid size, from `src/sudoku/`. |
 
 ## Known pitfalls
 - The toolchain is pinned to the newest releases that still support Node 18. Do not bump these until Node is upgraded:

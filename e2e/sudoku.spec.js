@@ -61,12 +61,28 @@ for (const { n, boxRows, boxCols } of SIZES) {
 
     const boxBorder = await board
       .getByRole('group', { name: 'Box 1' })
-      .evaluate((el) => parseFloat(getComputedStyle(el).borderTopWidth));
+      .evaluate((el) => parseFloat(getComputedStyle(el).borderBottomWidth));
     const cellBorder = await board
       .getByRole('button')
       .first()
-      .evaluate((el) => parseFloat(getComputedStyle(el).borderTopWidth));
+      .evaluate((el) => parseFloat(getComputedStyle(el).borderBottomWidth));
+    expect(boxBorder).toBe(3);
     expect(boxBorder).toBeGreaterThan(cellBorder);
+
+    // Edges and box lines are a single 3px line, not two stacked borders.
+    const boardEdge = await board.evaluate((el) => {
+      const s = getComputedStyle(el);
+      return { top: parseFloat(s.borderTopWidth), left: parseFloat(s.borderLeftWidth) };
+    });
+    expect(boardEdge).toEqual({ top: 3, left: 3 });
+    const boxes = board.getByRole('group', { name: /^Box \d+$/ });
+    const widths = await boxes.evaluateAll((els) =>
+      els.map((el) => {
+        const s = getComputedStyle(el);
+        return { top: parseFloat(s.borderTopWidth), left: parseFloat(s.borderLeftWidth) };
+      })
+    );
+    widths.forEach((w) => expect(w).toEqual({ top: 0, left: 0 }));
   });
 }
 

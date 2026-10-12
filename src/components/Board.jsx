@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import Cell from './Cell';
 import { groupIntoBoxes } from '../game/board';
 
-export default function Board({ size, boxRows, boxCols, cells, selected, onSelect }) {
+export default function Board({ size, boxRows, boxCols, cells, selected = null, onSelect }) {
   const boxes = groupIntoBoxes(cells, boxRows, boxCols);
   return (
     <div role="group" aria-label={`Sudoku board, ${size}x${size}`} className={`board board--${size}`}>
@@ -47,5 +47,3 @@ Board.propTypes = {
   selected: PropTypes.shape({ row: PropTypes.number, col: PropTypes.number }),
   onSelect: PropTypes.func.isRequired,
 };
-
-Board.defaultProps = { selected: null };

@@ -33,7 +33,7 @@ describe('App (fake timers)', () => {
     expect(screen.queryByText('Hello, World!')).not.toBeInTheDocument();
   });
 
-  it('shows a generating state before generating, and ignores a second click', () => {
+  it('shows a generating state before generating', () => {
     render(<App />);
     start();
     expect(screen.getByRole('status')).toHaveTextContent('Generating puzzle…');
@@ -41,10 +41,22 @@ describe('App (fake timers)', () => {
     screen.getAllByRole('radio').forEach((r) => expect(r).toBeDisabled());
     expect(generatePuzzle).not.toHaveBeenCalled();
     expect(screen.queryByRole('group', { name: /Sudoku board/ })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Start game' }));
     runTimers();
     expect(generatePuzzle).toHaveBeenCalledTimes(1);
     expect(generatePuzzle).toHaveBeenCalledWith(9, 'easy');
+  });
+
+  it('re-entry guard: two starts in the same tick schedule one generation', () => {
+    render(<App />);
+    // Both clicks land before React re-renders the button as disabled,
+    // so the second one reaches handleStart and must be stopped by the guard.
+    act(() => {
+      start();
+      start();
+    });
+    expect(screen.getByRole('button', { name: 'Start game' })).toBeDisabled();
+    runTimers();
+    expect(generatePuzzle).toHaveBeenCalledTimes(1);
   });
 
   it('starts a 4x4 Easy game with 16 cells in 4 boxes', () => {
@@ -102,7 +114,10 @@ describe('App (fake timers)', () => {
     expect(generatePuzzle).toHaveBeenCalledTimes(1);
   });
 
-  it('keeps a selected given cell unchanged after key presses', () => {
+  // Regression check only: no key handler is wired yet (D008), so this holds by
+  // construction. It must keep passing once cell input is added. The given-cell
+  // guard itself is tested in game/board.test.js.
+  it('regression: key presses leave a selected given cell unchanged', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('radio', { name: '4x4' }));
     start();

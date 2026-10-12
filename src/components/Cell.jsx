@@ -6,7 +6,7 @@ function cellName(row, col, value, given) {
   return given ? `${prefix}, given ${value}` : `${prefix}, ${value}`;
 }
 
-export default function Cell({ row, col, value, given, selected, onSelect }) {
+export default function Cell({ row, col, value, given, selected = false, onSelect }) {
   const classes = ['cell', given ? 'cell--given' : 'cell--player'];
   if (selected) classes.push('cell--selected');
   return (
@@ -30,5 +30,3 @@ Cell.propTypes = {
   selected: PropTypes.bool,
   onSelect: PropTypes.func.isRequired,
 };
-
-Cell.defaultProps = { selected: false };

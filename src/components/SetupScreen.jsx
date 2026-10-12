@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { SIZES, LEVELS, LEVEL_LABELS } from '../sudoku';
 
-export default function SetupScreen({ onStart, busy, error }) {
+export default function SetupScreen({ onStart, busy = false, error = undefined }) {
   const [size, setSize] = useState(9);
   const [level, setLevel] = useState('easy');
 
@@ -64,5 +64,3 @@ SetupScreen.propTypes = {
   busy: PropTypes.bool,
   error: PropTypes.string,
 };
-
-SetupScreen.defaultProps = { busy: false, error: undefined };
