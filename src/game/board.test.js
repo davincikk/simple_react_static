@@ -1,3 +1,4 @@
+import * as boardModule from './board';
 import { buildCells, groupIntoBoxes, applyCellInput } from './board';
 
 const makePuzzle = (size) =>
@@ -80,5 +81,48 @@ describe('applyCellInput', () => {
 
   it('ignores out-of-range targets', () => {
     expect(applyCellInput(cells, 5, 5, { type: 'digit', value: 1 })).toBe(cells);
+  });
+
+  it.each([[0], [3], [1.5], [NaN], ['1'], [null], [Infinity]])(
+    'ignores digit value %p outside integer 1..N (N = 2)',
+    (value) => {
+      expect(applyCellInput(cells, 0, 1, { type: 'digit', value })).toBe(cells);
+    }
+  );
+
+  it('ignores N+1 and a string digit on a 4x4 grid', () => {
+    const grid = buildCells(makePuzzle(4));
+    const empty = grid.flat().find((c) => !c.given);
+    [5, 0, '3', 2.5, NaN].forEach((value) => {
+      expect(applyCellInput(grid, empty.row, empty.col, { type: 'digit', value })).toBe(grid);
+    });
+  });
+
+  it('overwrites 3 with 5 on a 9x9 grid', () => {
+    const grid = buildCells(Array.from({ length: 9 }, () => Array(9).fill(0)));
+    const three = applyCellInput(grid, 0, 0, { type: 'digit', value: 3 });
+    const five = applyCellInput(three, 0, 0, { type: 'digit', value: 5 });
+    expect(three[0][0].value).toBe(3);
+    expect(five[0][0].value).toBe(5);
+    expect(five).not.toBe(three);
+  });
+
+  it('returns the same reference when the value does not change', () => {
+    const filled = applyCellInput(cells, 0, 1, { type: 'digit', value: 2 });
+    expect(applyCellInput(filled, 0, 1, { type: 'digit', value: 2 })).toBe(filled);
+  });
+
+  it('returns the same reference when erasing an empty cell', () => {
+    expect(applyCellInput(cells, 0, 1, { type: 'erase' })).toBe(cells);
+  });
+
+  it('ignores unknown input types', () => {
+    expect(applyCellInput(cells, 0, 1, { type: 'bogus', value: 1 })).toBe(cells);
+  });
+});
+
+describe('module surface (AC-5: no conflict or completion API)', () => {
+  it('exports only buildCells, groupIntoBoxes and applyCellInput', () => {
+    expect(Object.keys(boardModule).sort()).toEqual(['applyCellInput', 'buildCells', 'groupIntoBoxes']);
   });
 });

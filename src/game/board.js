@@ -25,16 +25,21 @@ export function groupIntoBoxes(cells, boxRows, boxCols) {
 }
 
 /**
- * Immutability guard. Returns the same reference when the target is given (or the input is a
- * no-op); otherwise returns a new grid. Never mutates its input.
+ * Immutability and range guard. Returns the same reference when the target is given, the input is
+ * a no-op (missing, note, unknown type, digit that is not an integer in 1..cells.length) or the
+ * resulting value equals the current value; otherwise returns a new grid. Never mutates its input.
  */
 export function applyCellInput(cells, row, col, input) {
   const target = cells[row] && cells[row][col];
   if (!target || target.given || !input) return cells;
   let value;
-  if (input.type === 'digit') value = input.value;
-  else if (input.type === 'erase') value = 0;
+  if (input.type === 'digit') {
+    const v = input.value;
+    if (!Number.isInteger(v) || v < 1 || v > cells.length) return cells;
+    value = v;
+  } else if (input.type === 'erase') value = 0;
   else return cells;
+  if (target.value === value) return cells;
   return cells.map((rowCells, r) =>
     r === row ? rowCells.map((cell, c) => (c === col ? { ...cell, value } : cell)) : rowCells
   );

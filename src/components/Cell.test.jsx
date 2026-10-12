@@ -35,4 +35,16 @@ describe('Cell', () => {
     const btn = screen.getByRole('button', { pressed: true });
     expect(btn).toHaveClass('cell--selected');
   });
+
+  it('marks a filled non-given cell as pen', () => {
+    render(<Cell row={0} col={0} value={4} given={false} onSelect={() => {}} />);
+    expect(screen.getByRole('button', { name: 'Row 1, column 1, 4' })).toHaveClass('cell--pen');
+  });
+
+  it('does not mark empty or given cells as pen', () => {
+    const { rerender } = render(<Cell row={0} col={0} value={0} given={false} onSelect={() => {}} />);
+    expect(screen.getByRole('button')).not.toHaveClass('cell--pen');
+    rerender(<Cell row={0} col={0} value={4} given onSelect={() => {}} />);
+    expect(screen.getByRole('button')).not.toHaveClass('cell--pen');
+  });
 });

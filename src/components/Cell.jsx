@@ -8,6 +8,7 @@ function cellName(row, col, value, given) {
 
 export default function Cell({ row, col, value, given, selected = false, onSelect }) {
   const classes = ['cell', given ? 'cell--given' : 'cell--player'];
+  if (!given && value !== 0) classes.push('cell--pen');
   if (selected) classes.push('cell--selected');
   return (
     <button

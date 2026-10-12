@@ -86,8 +86,42 @@ fieldset:disabled label {
   background: #fff;
 }
 
+.cell--pen {
+  color: #1a56b0;
+  font-weight: 400;
+}
+
 .cell--selected,
 .cell:focus-visible {
   outline: 3px solid #0057d9;
   outline-offset: -3px;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.numpad {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.numpad button {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.mode {
+  margin: 0;
+}
+
+.mode label {
+  margin-right: 1rem;
 }
