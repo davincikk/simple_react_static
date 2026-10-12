@@ -18,7 +18,7 @@ These must match the `commands` entry in `sdlc.config.yaml`. First-time setup: `
 
 ## Conventions
 - Language/style: JavaScript (ES modules) + JSX, function components only; ESLint (`eslint:recommended`, `react`, `react-hooks`) in `.eslintrc.cjs`. Declare `propTypes` for component props.
-- Layering: `src/main.jsx` (entry, mounts `App`) → `src/App.jsx` (screen state, puzzle generation) → `src/components/<Name>.jsx` (`SetupScreen`, `Board`, `Cell`; one component per file, default export). `src/game/` holds pure board logic (no React); `src/sudoku/` is the puzzle engine (do not change it without an approved design). Use default parameters, not `defaultProps`.
+- Layering: `src/main.jsx` (entry, mounts `App`) → `src/App.jsx` (screen state, puzzle generation) → `src/components/<Name>.jsx` (`SetupScreen`, `Board`, `Cell`, `NumberPad`, `ModeToggle`; one component per file, default export). `src/game/` holds pure board and input logic (`board.js`, `input.js`; no React); `src/sudoku/` is the puzzle engine (do not change it without an approved design). Use default parameters, not `defaultProps`.
 - Error handling: no remote calls yet; when added, keep data fetching out of presentational components and render an explicit error state.
 - Logging: no `console.*` in committed code; never log PII, tokens, or payment data.
 - Tests:
@@ -37,6 +37,9 @@ These must match the `commands` entry in `sdlc.config.yaml`. First-time setup: `
 |---|---|
 | Given | Pre-filled puzzle cell; fixed, bold, shaded, named "given N". |
 | Box | Sub-grid with a heavier border (2x2, 2x3 or 3x3). |
+| Pen value | A player-entered answer in a non-given cell; shown in ink colour (`cell--pen`); can be overwritten and erased. |
+| Pencil mode | Input mode in which digits are a no-op until the notes story; Erase still clears pen values. |
+| Number pad | On-screen `Digit 1..N` and `Erase` buttons, outside the board. |
 | BOX_DIMS | Box rows x columns per grid size, from `src/sudoku/`. |
 
 ## Known pitfalls
